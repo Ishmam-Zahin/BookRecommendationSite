@@ -52,7 +52,7 @@ function validateData(){
     let order = document.getElementById("order").value
     endpoint += `&printType=books&maxResults=30&orderBy=${order}&key=${myApiKey}`
 
-    if(isValid === false) document.getElementById("resultContainer").innerHTML = "ENTER AT LEAST ONE FIELD"
+    if(isValid === false) document.getElementById("resultContainer").innerHTML = `<p class="intro">ENTER AT LEAST ONE FIELD</p>`
     else{
         getData()
     }
@@ -62,6 +62,7 @@ async function getData(){
     try{
         let p = await fetch(endpoint)
         data = await p.json()
+        console.log(data)
         showResult()
     }
     catch (err){
@@ -72,7 +73,7 @@ async function getData(){
 function showResult(){
     let element = document.getElementById("resultContainer")
     if(data.items === undefined){
-        element.innerHTML = "INVALID SEARCH"
+        element.innerHTML = `<p class="intro">INVALID SEARCH</p>`
     }
     else{
         element.innerHTML = `
@@ -82,7 +83,7 @@ function showResult(){
                 for(let i=0; i<data.items.length; i++){
                     str += `
                     <div class="books">
-                    <p>${data.items[i].volumeInfo.title}</p>
+                    <p><span onclick="showExtraInfo(${i})">${data.items[i].volumeInfo.title}</span></p>
                     <section>${
                         function img(){
                             let sImg = ""
@@ -99,5 +100,44 @@ function showResult(){
         }
         `
     }
+}
+
+function showExtraInfo(index){
+    pElement = document.getElementById("extraInfo")
+    pElement.style.display = `flex`
+    let grid1 = document.getElementById("grid-1")
+    let grid2 = document.getElementById("grid-2")
+    let grid3 = document.getElementById("grid-3")
+
+    document.getElementById("eTitle").innerHTML = `${data.items[index].volumeInfo.title}`
+
+    grid1.innerHTML = `
+    ${
+        function img(){
+                            let sImg = ""
+                            if(data.items[index].volumeInfo.imageLinks !== undefined) sImg = `<img src="${data.items[index].volumeInfo.imageLinks.thumbnail}" alt="no image">`
+                            else sImg = `Thumbnail not available`
+                            return sImg
+                        }()
+    }
+    `
+
+    grid2.innerHTML = `
+    <p><span>Author Name:</span> ${data.items[index].volumeInfo.authors}</p>
+    <p><span>Publisher Name:</span> ${data.items[index].volumeInfo.publisher}</p>
+    <p><span>Publish Date:</span> ${data.items[index].volumeInfo.publishedDate}</p>
+    <p><span>Language:</span> ${data.items[index].volumeInfo.language}</p>
+    <p><span>Genre:</span> ${data.items[index].volumeInfo.categories}</p>
+    `
+
+    grid3.innerHTML = `
+    <p><span>Description:</span> ${data.items[index].volumeInfo.description}</p>
+    <p class="eBuy"><a href="https://www.google.com/">BUY THIS BOOK</a></p>
+    `
+}
+
+function hideExtraInfo(){
+    pElement = document.getElementById("extraInfo")
+    pElement.style.display = `none`
 }
 
