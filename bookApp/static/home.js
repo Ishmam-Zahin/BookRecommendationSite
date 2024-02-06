@@ -66,7 +66,7 @@ async function getData(){
         showResult()
     }
     catch (err){
-        console.log(err.message)
+        document.getElementById("resultContainer").innerHTML = err.message
     }
 }
 
