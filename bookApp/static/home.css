@@ -70,9 +70,10 @@ body{
 }
 .books p{
     width: 100%;
-    height: max(50px, fit-content);
+    height: 50px;
     font-family: "Arial Black", Serif;
     text-align: center;
+    overflow: hidden;
 }
 .books p span:hover{
     color: #003cff;

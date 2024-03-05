@@ -1,6 +1,26 @@
 const myApiKey = "AIzaSyDvwGOI6Fi7m7N3x_VeDaQt60C8iPZeruc"
 let endpoint
 let data
+const showResultStartHelper = function (i){
+    let sImg = ""
+    if (data.items[i].volumeInfo.imageLinks !== undefined) sImg = `<img src="${data.items[i].volumeInfo.imageLinks.thumbnail}" alt="no image">`
+    else sImg = `Thumbnail not available`
+    return sImg
+}
+
+const showResultStart = function (){
+    let str = ""
+    for (let i = 0; i < data.items.length; i++) {
+        str += `
+        <div class="books">
+        <p><span onclick="showExtraInfo(${i})">${data.items[i].volumeInfo.title}</span></p>
+        <section>${showResultStartHelper(i)}</section>
+        </div>
+        `
+    }
+    return str
+}
+
 function validateData() {
     endpoint = `https://www.googleapis.com/books/v1/volumes?q=`
     let isValid = false
@@ -64,6 +84,7 @@ function validateData() {
 
 async function getData() {
     try {
+        document.getElementById("resultContainer").innerHTML = `<p class="intro"><img src="/static/resources/laoder.gif" width="50%"><br>LOADING. . .</p>`
         let p = await fetch(endpoint)
         data = await p.json()
         console.log(endpoint)
@@ -80,28 +101,15 @@ function showResult() {
         element.innerHTML = `<p class="intro">INVALID SEARCH</p>`
     }
     else {
-        element.innerHTML = `
-        ${function start() {
-                let str = ""
-                for (let i = 0; i < data.items.length; i++) {
-                    str += `
-                    <div class="books">
-                    <p><span onclick="showExtraInfo(${i})">${data.items[i].volumeInfo.title}</span></p>
-                    <section>${function img() {
-                            let sImg = ""
-                            if (data.items[i].volumeInfo.imageLinks !== undefined) sImg = `<img src="${data.items[i].volumeInfo.imageLinks.thumbnail}" alt="no image">`
-                            else sImg = `Thumbnail not available`
-                            return sImg
-                        }()
-                        }</section>
-                    </div>
-                    `
-                }
-                return str
-            }()
-            }
-        `
+        element.innerHTML = `${showResultStart()}`
     }
+}
+
+const showExtraInfoImg = function (index){
+    let sImg = ""
+    if (data.items[index].volumeInfo.imageLinks !== undefined) sImg = `<img src="${data.items[index].volumeInfo.imageLinks.thumbnail}" alt="no image">`
+    else sImg = `Thumbnail not available`
+    return sImg
 }
 
 function showExtraInfo(index) {
@@ -113,15 +121,7 @@ function showExtraInfo(index) {
 
     document.getElementById("eTitle").innerHTML = `${data.items[index].volumeInfo.title}`
 
-    grid1.innerHTML = `
-    ${function img() {
-            let sImg = ""
-            if (data.items[index].volumeInfo.imageLinks !== undefined) sImg = `<img src="${data.items[index].volumeInfo.imageLinks.thumbnail}" alt="no image">`
-            else sImg = `Thumbnail not available`
-            return sImg
-        }()
-        }
-    `
+    grid1.innerHTML = `${showExtraInfoImg(index)}`
 
     grid2.innerHTML = `
     <p><span>Author Name:</span> ${data.items[index].volumeInfo.authors}</p>
