@@ -84,7 +84,9 @@ function validateData() {
 
 async function getData() {
     try {
-        document.getElementById("resultContainer").innerHTML = `<p class="intro"><img src="/static/resources/laoder.gif" width="50%"><br>LOADING. . .</p>`
+        document.getElementById("resultContainer").innerHTML = `<div class="loader" id="loader">
+        <div></div>
+        </div>`
         let p = await fetch(endpoint)
         data = await p.json()
         console.log(endpoint)
